@@ -1,8 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <NDepend AppName="Zollner_WSAug25" Platform="DotNet" FileWrittenByProductVersion="2024.2.0.9740">
   <OutputDir KeepXmlFiles="False">.\NDependOut</OutputDir>
-  <IDEFiles />
-  <RuntimeProfileDesc>.NET 9.0</RuntimeProfileDesc>
+  <IDEFiles>
+    <IDEFile FilePath=".\PersonManagerApp.sln" Filters="-test" Configuration="DEBUG|AnyCPU">
+      <RootDirResolvingInfo Enabled="False" Hints="Debug|bin|.bin|b|AnyCPU|x64|x86|v*.*|net*" TimeOut="10">
+        <RootDir>.</RootDir>
+      </RootDirResolvingInfo>
+    </IDEFile>
+  </IDEFiles>
+  <RuntimeProfileDesc>.NET 8.0</RuntimeProfileDesc>
   <Assemblies />
   <Dirs />
   <MergeCodeGeneratedByCompiler>True</MergeCodeGeneratedByCompiler>
@@ -48,18 +54,20 @@
   <HistoricAnalysisResult PersistRecurrence="3" UseCustomDir="False" CustomDir="" />
   <SourceFileRebasing FromPath="" ToPath="" />
   <PathVariables />
-  <RuleFiles />
+  <RuleFiles>
+    <RuleFile Active="True" Path=".\Zollner_Rules.ndrules" />
+  </RuleFiles>
   <GraphFiles />
-  <ProjectRules AreActive="True" QueryPersistenceKind="PersistOnlyQueryIdForUntouchedQueries" />
+  <ProjectRules AreActive="False" QueryPersistenceKind="PersistOnlyQueryIdForUntouchedQueries" />
   <ProjectDebtSettings DebtSettingsStorage="0" SettingsFilePath="">
     <DebtSettings>
       <DebtFactor>1</DebtFactor>
       <AnnualInterestFactor>1</AnnualInterestFactor>
       <DebtDefault>0</DebtDefault>
       <AnnualInterestDefault>0</AnnualInterestDefault>
-      <DebtStringFormat>$ManDay$</DebtStringFormat>
-      <MoneyPerManHour>50</MoneyPerManHour>
-      <Currency>USD</Currency>
+      <DebtStringFormat>$Money$</DebtStringFormat>
+      <MoneyPerManHour>85</MoneyPerManHour>
+      <Currency>EUR</Currency>
       <CurrencyLocation>After</CurrencyLocation>
       <EstimatedNumberOfManDayToDevelop1000LogicalLinesOfCode>18</EstimatedNumberOfManDayToDevelop1000LogicalLinesOfCode>
       <NumberOfWorkDayPerYear>240</NumberOfWorkDayPerYear>
@@ -73,8 +81,7 @@
       <High2Critical_SeverityThreshold>72000000000</High2Critical_SeverityThreshold>
       <Critical2Blocker_SeverityThreshold>360000000000</Critical2Blocker_SeverityThreshold>
     </DebtSettings>
-  </ProjectDebtSettings>
-  <Queries>
+  </ProjectDebtSettings><Queries>
     <Group Name="Quality Gates" Active="True" ShownInReport="False">
       <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[$Quality Gates Evolution$]]></Query>
       <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[$Percentage Coverage$]]></Query>
@@ -509,6 +516,4 @@
         <Query Active="False" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[$ND9916$]]></Query>
       </Group>
     </Group>
-  </Queries>
-  <WarnFilter />
-</NDepend>
+  </Queries></NDepend>

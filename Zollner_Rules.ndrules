@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Queries>
+  <Group Name="QualityGates" Active="True" ShownInReport="False">
+    <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <QualityGate Name="Blocker Issues" Unit="issues" />
+failif count > 0 issues
+from i in Issues
+where i.Severity == Severity.Blocker
+select new { i, i.Severity, i.Debt }
+]]></Query>
+  </Group>
+  <Group Name="Methods" Active="True" ShownInReport="False">
+    <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Zu großen Methoden</Name>
+warnif count > 0 
+
+from m in JustMyCode.Methods
+
+where !m.IsPropertyGetter && !m.IsPropertySetter && !m.IsConstructor
+ && m.NbLinesOfCode > 2
+
+select new { m, m.NbLinesOfCode }]]></Query>
+    <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Zu komplexe Methoden</Name>
+warnif count > 0
+ 
+from m in JustMyCode.Methods
+ 
+where !m.IsPropertyGetter && !m.IsPropertySetter && !m.IsConstructor
+&& m.CyclomaticComplexity > 0
+ 
+select new { m, m.CyclomaticComplexity }]]></Query>
+    <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Zu viele Parameter in Methoden</Name>
+warnif count > 0
+ 
+from m in JustMyCode.Methods
+ 
+where !m.IsPropertyGetter && !m.IsPropertySetter && !m.IsConstructor
+&& m.NbParameters > 0
+ 
+select new { m, m.NbParameters }]]></Query>
+  </Group>
+  <Group Name="Classes" Active="True" ShownInReport="False">
+    <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Zu großen Klassen</Name>
+warnif count > 0 
+
+from t in JustMyCode.Types
+
+where !t.IsGeneratedByCompiler
+
+ && t.NbLinesOfCode > 10
+
+select new { t, t.NbLinesOfCode }]]></Query>
+    <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Zu viele Methoden in einer Klasse</Name>
+warnif count > 0 
+
+let allInstanceTypes = JustMyCode.Types.Where(t => !t.IsGeneratedByCompiler)
+
+from t in allInstanceTypes
+
+let trueMethods = t.Methods.Where(m => !m.IsPropertyGetter && !m.IsPropertySetter && !m.IsConstructor)
+
+where !t.IsGeneratedByCompiler && trueMethods.Count() > 1
+
+select new { t, trueMethods, Severity = Severity.Low, Debt = 17.ToMinutes().ToDebt()}]]></Query>
+    <Group Name="Namingpatterns" Active="True" ShownInReport="False">
+      <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Musterkonsistenz</Name>
+warnif count > 0 
+
+let namingPatterns = new string[]
+{
+  "Manager",
+  "Repository",
+  "DisplayCommands",
+  "Parser",
+  "Reader",
+
+  "Program"
+}
+
+let managementClasses = JustMyCode.Types
+                                  .Where(t => !t.ParentNamespace.FullName.Contains(".DataClasses"))
+                                  .Where(t => !t.IsGeneratedByCompiler)
+
+from t in managementClasses
+
+where !namingPatterns.Any(np => t.SimpleName.EndsWith(np))
+
+select new { t, Severity = Severity.Blocker }
+]]></Query>
+      <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Namensmuster Repository</Name>
+warnif count > 0 
+
+let patternname = "Repository"
+
+let allowedMethods = new string[]
+{
+  "Insert",
+  "Update",
+  "Delete",
+  "Load",
+  "GetById"
+}
+
+let allowedPrefixes = new string[]
+{
+}
+
+
+let patternClasses = JustMyCode.Types
+                                  .Where(t => !t.ParentNamespace.FullName.Contains(".DataClasses"))
+                                  .Where(t => !t.IsGeneratedByCompiler)
+                                  .Where(t => t.SimpleName.EndsWith(patternname))
+
+from t in patternClasses
+
+let illegalMethods = t.Methods.Where(m => !allowedMethods.Any(am => m.SimpleName == am) 
+                                       && !allowedPrefixes.Any(ap => m.SimpleName.StartsWith(ap)))
+
+where illegalMethods.Any()
+
+select new { t, illegalMethods, Severity = Severity.Blocker }]]></Query>
+      <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Namensmuster Manager</Name>
+warnif count > 0 
+
+let patternname = "Manager"
+
+let allowedMethods = new string[]
+{
+  "Add",
+  "Remove",
+  "Update"
+}
+
+let allowedPrefixes = new string[]
+{
+  "Get",
+  "Is",
+  "Are"
+}
+
+
+let patternClasses = JustMyCode.Types
+                                  .Where(t => !t.ParentNamespace.FullName.Contains(".DataClasses"))
+                                  .Where(t => !t.IsGeneratedByCompiler)
+                                  .Where(t => t.SimpleName.EndsWith(patternname))
+
+from t in patternClasses
+
+let illegalMethods = t.Methods.Where(m => !allowedMethods.Any(am => m.SimpleName == am) 
+                                       && !allowedPrefixes.Any(ap => m.SimpleName.StartsWith(ap)))
+
+where illegalMethods.Any()
+
+select new { t, illegalMethods, Severity = Severity.Blocker }
+]]></Query>
+      <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Namensmuster DisplayCommands</Name>
+warnif count > 0 
+
+let patternname = "DisplayCommands"
+
+let allowedMethods = new string[]
+{
+}
+
+let allowedPrefixes = new string[]
+{
+  "Display"
+}
+
+
+let patternClasses = JustMyCode.Types
+                                  .Where(t => !t.ParentNamespace.FullName.Contains(".DataClasses"))
+                                  .Where(t => !t.IsGeneratedByCompiler)
+                                  .Where(t => t.SimpleName.EndsWith(patternname))
+
+from t in patternClasses
+
+let illegalMethods = t.Methods.Where(m => !allowedMethods.Any(am => m.SimpleName == am) 
+                                       && !allowedPrefixes.Any(ap => m.SimpleName.StartsWith(ap)))
+
+where illegalMethods.Any()
+
+select new { t, illegalMethods, Severity = Severity.Blocker }
+]]></Query>
+      <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Namensmuster Parser</Name>
+warnif count > 0 
+
+let patternname = "Parser"
+
+let allowedMethods = new string[]
+{
+  
+}
+
+let allowedPrefixes = new string[]
+{
+  "Parse"
+}
+
+
+let patternClasses = JustMyCode.Types
+                                  .Where(t => !t.ParentNamespace.FullName.Contains(".DataClasses"))
+                                  .Where(t => !t.IsGeneratedByCompiler)
+                                  .Where(t => t.SimpleName.EndsWith(patternname))
+
+from t in patternClasses
+
+let illegalMethods = t.Methods.Where(m => !allowedMethods.Any(am => m.SimpleName == am) 
+                                       && !allowedPrefixes.Any(ap => m.SimpleName.StartsWith(ap)))
+
+where illegalMethods.Any()
+
+select new { t, illegalMethods, Severity = Severity.Blocker }
+]]></Query>
+      <Query Active="True" DisplayList="True" DisplayStat="False" DisplaySelectionView="False" IsCriticalRule="False"><![CDATA[// <Name>Namensmuster Reader</Name>
+warnif count > 0 
+
+let patternname = "Reader"
+
+let allowedMethods = new string[]
+{
+}
+
+let allowedPrefixes = new string[]
+{
+  "Read"
+}
+
+
+let patternClasses = JustMyCode.Types
+                                  .Where(t => !t.ParentNamespace.FullName.Contains(".DataClasses"))
+                                  .Where(t => !t.IsGeneratedByCompiler)
+                                  .Where(t => t.SimpleName.EndsWith(patternname))
+
+from t in patternClasses
+
+let illegalMethods = t.Methods.Where(m => !allowedMethods.Any(am => m.SimpleName == am) 
+                                       && !allowedPrefixes.Any(ap => m.SimpleName.StartsWith(ap)))
+
+where illegalMethods.Any()
+
+select new { t, illegalMethods, Severity = Severity.Blocker }
+]]></Query>
+    </Group>
+  </Group>
+</Queries>
