@@ -1,19 +1,17 @@
-﻿namespace ConsoleClient;
+﻿using DavidTielke.PMA.Logic.PersonManagement.Contracts;
+
+namespace DavidTielke.PMA.UI.ConsoleClient;
 
 
-public class PersonCloner
+public class PersonDisplayCommands : IPersonDisplayCommands
 {
+    private readonly IPersonManager _manager;
 
-}
-
-public class PersonDisplayCommands
-{
-    private readonly PersonManager _manager;
-    public PersonDisplayCommands()
+    public PersonDisplayCommands(IPersonManager manager)
     {
-        _manager = new PersonManager();
+        _manager = manager;
     }
-        
+
     public void DisplayAllAdults()
     {
         var adults = _manager.GetAllAdults().ToList();
